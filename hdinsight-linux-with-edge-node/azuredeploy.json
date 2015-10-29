@@ -126,7 +126,7 @@
         },
         "edgeNodeSetupScriptUri": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/anthony-murphy/azure-quickstart-templates/master/hdinsight-linux-with-edge-node/connectToWASB.sh",
+            "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/hdinsight-linux-with-edge-node/connectToWASB.sh",
             "metadata": { 
                 "description": "A public http(s) uri that points to a script that will install an app on the edge node."
             }
