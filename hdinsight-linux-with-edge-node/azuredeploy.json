@@ -325,11 +325,7 @@
                     "fileUris": [
                         "https://raw.githubusercontent.com/hdinsight/Edge-Node-Scripts/ssh-key/edgeNodeClusterSshSetup.sh"
                     ],
-                    "commandToExecute": "[concat('bash edgeNodeClusterSshSetup.sh ',
-                    parameters('edgeNodeVirtualMachineName'),' ',
-                    parameters('clusterStorageAccountName'),' ',
-                    listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('clusterStorageAccountName')),variables('defaultApiVersion')).key1,' ',
-                    parameters('clusterName'))]"
+                    "commandToExecute": "[concat('bash edgeNodeClusterSshSetup.sh ', parameters('edgeNodeVirtualMachineName'),' ', parameters('clusterStorageAccountName'),' ', listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('clusterStorageAccountName')),variables('defaultApiVersion')).key1,' ', parameters('clusterName'))]"
                 }
             }
         },
@@ -339,7 +335,7 @@
             "location": "[parameters('location')]",
             "apiVersion": "[variables('clusterApiVersion')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/',parameters('edgeNodeVirtualMachineName'),'/',variables('edgeNodeClusterSshSetupExtensionName'))]",
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('edgeNodeVirtualMachineName'),'/extensions/',variables('edgeNodeClusterSshSetupExtensionName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/',parameters('clusterStorageAccountName'))]",
                 "[concat('Microsoft.Network/virtualNetworks/',variables('clusterVNetName'))]"
             ],
