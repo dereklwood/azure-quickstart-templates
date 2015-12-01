@@ -142,7 +142,8 @@
         "edgeNodeImagePublisher": "Canonical",
         "edgeNodeImageOffer": "UbuntuServer",
         "edgeNodeImageSku": "12.04.5-LTS",
-        "edgeNodeExtensionName": "edgeNodeSetup",
+        "edgeNodeClusterSshSetupExtensionName": "edgeNodeClusterSshSetup",
+        "edgeNodeSetupExtensionName": "edgeNodeSetup",
         "edgeNodeOSDiskName": "[concat(parameters('clusterName'), '-', parameters('edgeNodeVirtualMachineName'))]",
         "edgeNodeNicName": "[concat(variables('clusterVNetName'), '-', parameters('edgeNodeVirtualMachineName'), '-nic')]",
         "edgeNodePublicIpName": "[concat(variables('edgeNodeNicName'), '-publicip')]",
@@ -309,12 +310,36 @@
             }
         },
         {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('edgeNodeVirtualMachineName'),'/',variables('edgeNodeClusterSshSetupExtensionName'))]",
+            "apiVersion": "[variables('defaultApiVersion')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('edgeNodeVirtualMachineName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.OSTCExtensions",
+                "type": "CustomScriptForLinux",
+                "typeHandlerVersion": "1.2",
+                "settings": {
+                    "fileUris": [
+                        "https://raw.githubusercontent.com/hdinsight/Edge-Node-Scripts/ssh-key/edgeNodeClusterSshSetup.sh"
+                    ],
+                    "commandToExecute": "[concat('bash edgeNodeClusterSshSetup.sh ',
+                    parameters('edgeNodeVirtualMachineName'),' ',
+                    parameters('clusterStorageAccountName'),' ',
+                    listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('clusterStorageAccountName')),variables('defaultApiVersion')).key1,' ',
+                    parameters('clusterName'))]"
+                }
+            }
+        },
+        {
             "name": "[parameters('clusterName')]",
             "type": "Microsoft.HDInsight/clusters",
             "location": "[parameters('location')]",
             "apiVersion": "[variables('clusterApiVersion')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/',parameters('edgeNodeVirtualMachineName'))]",
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('edgeNodeVirtualMachineName'),'/',variables('edgeNodeClusterSshSetupExtensionName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/',parameters('clusterStorageAccountName'))]",
                 "[concat('Microsoft.Network/virtualNetworks/',variables('clusterVNetName'))]"
             ],
@@ -401,7 +426,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('edgeNodeVirtualMachineName'),'/',variables('edgeNodeExtensionName'))]",
+            "name": "[concat(parameters('edgeNodeVirtualMachineName'),'/',variables('edgeNodeSetupExtensionName'))]",
             "apiVersion": "[variables('defaultApiVersion')]",
             "location": "[parameters('location')]",
             "dependsOn": [
@@ -421,7 +446,6 @@
                 }
             }
         }
-
     ],
     "outputs": {
         "vnet": {
