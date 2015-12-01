@@ -384,7 +384,18 @@
                             "virtualNetworkProfile": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName'))]",
                                 "subnet": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName')), '/subnets/', parameters('clusterVNetSubnetName'))]"
-                            }
+                            },
+                            "scriptActions": [
+                                {
+                                    "name": "clusterSshSetup",
+                                    "uri": "https://raw.githubusercontent.com/hdinsight/Edge-Node-Scripts/ssh-key/clusterSshSetup.sh",
+                                    "parameters": "[concat(
+                                        parameters('edgeNodeVirtualMachineName'),' ',
+                                        parameters('clusterStorageAccountName'),' ',
+                                        listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('clusterStorageAccountName')),variables('defaultApiVersion')).key1,' ',
+                                        parameters('clusterName'))]"
+                                }
+                            ]
                         },
                         {
                             "name": "workernode",
