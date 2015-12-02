@@ -133,7 +133,7 @@
         },
         "edgeNodeSetupScriptCustomParameter": {
             "type": "string",
-            "defaultValue": "undefined"
+            "defaultValue": "undefined",
             "metadata": {
                 "description": "Passed to the edge node setup script as the 4th parameter."
             }
@@ -188,97 +188,6 @@
             "tags": { },
             "properties": {
                 "accountType": "Standard_LRS"
-            }
-        },
-        {
-            "name": "[parameters('clusterName')]",
-            "type": "Microsoft.HDInsight/clusters",
-            "location": "[parameters('location')]",
-            "apiVersion": "[variables('clusterApiVersion')]",
-            "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/',parameters('clusterStorageAccountName'))]",
-                "[concat('Microsoft.Network/virtualNetworks/',variables('clusterVNetName'))]"
-            ],
-            "tags": { },
-            "properties": {
-                "clusterVersion": "3.2",
-                "osType": "Linux",
-                "clusterDefinition": {
-                    "kind": "[parameters('clusterType')]",
-
-                    "configurations": {
-                        "gateway": {
-                            "restAuthCredential.isEnabled": true,
-                            "restAuthCredential.username": "[parameters('clusterLoginUserName')]",
-                            "restAuthCredential.password": "[parameters('clusterLoginPassword')]"
-                        }
-                    }
-                },
-                "storageProfile": {
-                    "storageaccounts": [
-                        {
-                            "name": "[concat(parameters('clusterStorageAccountName'),'.blob.core.windows.net')]",
-                            "isDefault": true,
-                            "container": "[parameters('clusterName')]",
-                            "key": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('clusterStorageAccountName')), variables('defaultApiVersion')).key1]"
-                        }
-                    ]
-                },
-                "computeProfile": {
-                    "roles": [
-                        {
-                            "name": "headnode",
-                            "targetInstanceCount": "2",
-                            "hardwareProfile": {
-                                "vmSize": "Large"
-                            },
-                            "osProfile": {
-                                "linuxOperatingSystemProfile": {
-                                    "username": "[parameters('sshUserName')]",
-                                    "password": "[parameters('sshPassword')]"
-                                }
-                            },
-                            "virtualNetworkProfile": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName'))]",
-                                "subnet": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName')), '/subnets/', parameters('clusterVNetSubnetName'))]"
-                            }
-                        },
-                        {
-                            "name": "workernode",
-                            "targetInstanceCount": "[parameters('clusterWorkerNodeCount')]",
-                            "hardwareProfile": {
-                                "vmSize": "Large"
-                            },
-                            "osProfile": {
-                                "linuxOperatingSystemProfile": {
-                                    "username": "[parameters('sshUserName')]",
-                                    "password": "[parameters('sshPassword')]"
-                                }
-                            },
-                            "virtualNetworkProfile": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName'))]",
-                                "subnet": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName')), '/subnets/', parameters('clusterVNetSubnetName'))]"
-                            }
-                        },
-                        {
-                            "name": "zookeepernode",
-                            "targetInstanceCount": "3",
-                            "hardwareProfile": {
-                                "vmSize": "[variables(concat(parameters('clusterType'),'ZookeeperSize'))]"
-                            },
-                            "osProfile": {
-                                "linuxOperatingSystemProfile": {
-                                    "username": "[parameters('sshUserName')]",
-                                    "password": "[parameters('sshPassword')]"
-                                }
-                            },
-                            "virtualNetworkProfile": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName'))]",
-                                "subnet": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName')), '/subnets/', parameters('clusterVNetSubnetName'))]"
-                            }
-                        }
-                    ]
-                }
             }
         },
         {
@@ -400,7 +309,98 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('edgeNodeNicName'))]"
+                            "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('edgeNodeNicName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "[parameters('clusterName')]",
+            "type": "Microsoft.HDInsight/clusters",
+            "location": "[parameters('location')]",
+            "apiVersion": "[variables('clusterApiVersion')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/',parameters('clusterStorageAccountName'))]",
+                "[concat('Microsoft.Network/virtualNetworks/',variables('clusterVNetName'))]",
+                "[concat('Microsoft.Network/virtualNetworks/',parameters('edgeNodeVirtualMachineName'))]"
+            ],
+            "tags": { },
+            "properties": {
+                "clusterVersion": "3.2",
+                "osType": "Linux",
+                "clusterDefinition": {
+                    "kind": "[parameters('clusterType')]",
+                    "configurations": {
+                        "gateway": {
+                            "restAuthCredential.isEnabled": true,
+                            "restAuthCredential.username": "[parameters('clusterLoginUserName')]",
+                            "restAuthCredential.password": "[parameters('clusterLoginPassword')]"
+                        }
+                    }
+                },
+                "storageProfile": {
+                    "storageaccounts": [
+                        {
+                            "name": "[concat(parameters('clusterStorageAccountName'),'.blob.core.windows.net')]",
+                            "isDefault": true,
+                            "container": "[parameters('clusterName')]",
+                            "key": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('clusterStorageAccountName')), variables('defaultApiVersion')).key1]"
+                        }
+                    ]
+                },
+                "computeProfile": {
+                    "roles": [
+                        {
+                            "name": "headnode",
+                            "targetInstanceCount": "2",
+                            "hardwareProfile": {
+                                "vmSize": "Large"
+                            },
+                            "osProfile": {
+                                "linuxOperatingSystemProfile": {
+                                    "username": "[parameters('sshUserName')]",
+                                    "password": "[parameters('sshPassword')]"
+                                }
+                            },
+                            "virtualNetworkProfile": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName'))]",
+                                "subnet": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName')), '/subnets/', parameters('clusterVNetSubnetName'))]"
+                            }
+                        },
+                        {
+                            "name": "workernode",
+                            "targetInstanceCount": "[parameters('clusterWorkerNodeCount')]",
+                            "hardwareProfile": {
+                                "vmSize": "Large"
+                            },
+                            "osProfile": {
+                                "linuxOperatingSystemProfile": {
+                                    "username": "[parameters('sshUserName')]",
+                                    "password": "[parameters('sshPassword')]"
+                                }
+                            },
+                            "virtualNetworkProfile": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName'))]",
+                                "subnet": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName')), '/subnets/', parameters('clusterVNetSubnetName'))]"
+                            }
+                        },
+                        {
+                            "name": "zookeepernode",
+                            "targetInstanceCount": "3",
+                            "hardwareProfile": {
+                                "vmSize": "[variables(concat(parameters('clusterType'),'ZookeeperSize'))]"
+                            },
+                            "osProfile": {
+                                "linuxOperatingSystemProfile": {
+                                    "username": "[parameters('sshUserName')]",
+                                    "password": "[parameters('sshPassword')]"
+                                }
+                            },
+                            "virtualNetworkProfile": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName'))]",
+                                "subnet": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName')), '/subnets/', parameters('clusterVNetSubnetName'))]"
+                            }
                         }
                     ]
                 }
