@@ -130,6 +130,13 @@
             "metadata": { 
                 "description": "A public http(s) uri that points to a script that will install an app on the edge node."
             }
+        },
+        "edgeNodeSetupScriptCustomParameter": {
+            "type": "string",
+            "defaultValue": "undefined"
+            "metadata": {
+                "description": "Passed to the edge node setup script as the 4th parameter."
+            }
         }
     },
     "variables": {
@@ -414,10 +421,10 @@
                 "typeHandlerVersion": "1.2",
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/hdinsight/Edge-Node-Scripts/master/edgeNodeSetup.sh",
+                        "https://raw.githubusercontent.com/hdinsight/Edge-Node-Scripts/release-12-1-2015/edgeNodeSetup.sh",
                         "[parameters('edgeNodeSetupScriptUri')]"
                     ],
-                    "commandToExecute": "[concat('sudo -E bash edgeNodeSetup.sh ',parameters('edgeNodeSetupScriptUri'),' ',parameters('clusterName'),' ',parameters('sshUserName'),' ',parameters('sshPassword'),' ',parameters('clusterLoginUserName'),' ',parameters('clusterLoginPassword'))]"
+                    "commandToExecute": "[concat('sudo -E bash edgeNodeSetup.sh ',parameters('edgeNodeSetupScriptUri'),' ',parameters('clusterName'),' ',parameters('sshUserName'),' ',parameters('sshPassword'),' ',parameters('clusterLoginUserName'),' ',parameters('clusterLoginPassword'),' ',parameters('edgeNodeSetupScriptCustomParameter'))]"
                 }
             }
         }
