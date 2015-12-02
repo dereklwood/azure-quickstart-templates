@@ -323,7 +323,7 @@
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/',parameters('clusterStorageAccountName'))]",
                 "[concat('Microsoft.Network/virtualNetworks/',variables('clusterVNetName'))]",
-                "[concat('Microsoft.Network/virtualNetworks/',parameters('edgeNodeVirtualMachineName'))]"
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('edgeNodeVirtualMachineName'))]"
             ],
             "tags": { },
             "properties": {
