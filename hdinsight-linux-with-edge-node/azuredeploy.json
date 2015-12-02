@@ -309,7 +309,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Compute/virtualMachines', variables('edgeNodeNicName'))]"
+                            "id": "[resourceId('Microsoft.Network/virtualNetworks/', variables('edgeNodeNicName'))]"
                         }
                     ]
                 }
