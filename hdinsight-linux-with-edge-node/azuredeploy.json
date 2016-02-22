@@ -126,7 +126,7 @@
         },
         "edgeNodeSetupScriptUri": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/caskdata/cdap/feature/hdinsight-ambari-api/cdap-distributions/src/hdinsight/install.sh",
+            "defaultValue": "https://raw.githubusercontent.com/caskdata/cdap/release/3.3/cdap-distributions/src/hdinsight/install.sh",
             "metadata": { 
                 "description": "A public http(s) uri that points to a script that will install an app on the edge node."
             }
