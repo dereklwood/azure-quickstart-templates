@@ -49,9 +49,8 @@
         },
         "clusterType": {
             "type": "string",
-            "defaultValue": "hadoop",
+            "defaultValue": "hbase",
             "allowedValues": [
-                "hadoop",
                 "hbase"
             ],
             "metadata": {

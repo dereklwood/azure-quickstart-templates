@@ -9,7 +9,7 @@
             "value": "changeme"
         },
         "clusterType": { 
-            "value": "hadoop"
+            "value": "hbase"
         },
         "clusterStorageAccountName": {
             "value": "changeme"
